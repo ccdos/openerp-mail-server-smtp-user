@@ -29,11 +29,12 @@ class ir_mail_server(osv.osv):
                    smtp_user=None, smtp_password=None, smtp_encryption=None, smtp_debug=False,
                    context=None):
         # Get SMTP Server Details from Mail Server
+        mail_user = message['From'].split('<')[1].split('>')[0].split('@')[0]   #from Administrator <1001@qq.com>, get 1001
         mail_server = None
         if mail_server_id:
             mail_server = self.browse(cr, SUPERUSER_ID, mail_server_id)
         elif not smtp_server:
-            mail_server_ids = self.search(cr, SUPERUSER_ID, [], order='sequence', limit=1)
+            mail_server_ids = self.search(cr, SUPERUSER_ID, [('smtp_user','=', mail_user)], order='sequence', limit=1)
             if mail_server_ids:
                 mail_server = self.browse(cr, SUPERUSER_ID, mail_server_ids[0])
 
@@ -53,6 +54,7 @@ class ir_mail_server(osv.osv):
             if smtp_encryption is None and tools.config.get('smtp_ssl'):
                 smtp_encryption = 'starttls' # STARTTLS is the new meaning of the smtp_ssl flag as of v7.0
         message.replace_header('From', '%s <%s>' % (message['From'], smtp_user))
+        message['Return-Path']= message['From']
 
         return super(ir_mail_server, self).send_email(cr, uid, message, mail_server_id=mail_server_id, smtp_server=smtp_server, smtp_port=smtp_port, smtp_user=smtp_user, smtp_password=smtp_password, smtp_encryption=smtp_encryption, smtp_debug=smtp_debug, context=context)
 
