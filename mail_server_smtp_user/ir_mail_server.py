@@ -53,7 +53,7 @@ class ir_mail_server(osv.osv):
             smtp_password = smtp_password or tools.config.get('smtp_password')
             if smtp_encryption is None and tools.config.get('smtp_ssl'):
                 smtp_encryption = 'starttls' # STARTTLS is the new meaning of the smtp_ssl flag as of v7.0
-        message.replace_header('From', '%s <%s>' % (message['From'], smtp_user))
+        # message.replace_header('From', '%s <%s>' % (message['From'], smtp_user))
         message['Return-Path']= message['From']
 
         return super(ir_mail_server, self).send_email(cr, uid, message, mail_server_id=mail_server_id, smtp_server=smtp_server, smtp_port=smtp_port, smtp_user=smtp_user, smtp_password=smtp_password, smtp_encryption=smtp_encryption, smtp_debug=smtp_debug, context=context)
