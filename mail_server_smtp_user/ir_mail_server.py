@@ -29,11 +29,12 @@ class ir_mail_server(osv.osv):
                    smtp_user=None, smtp_password=None, smtp_encryption=None, smtp_debug=False,
                    context=None):
         # Get SMTP Server Details from Mail Server
+        mail_from = message['From']
         mail_server = None
         if mail_server_id:
             mail_server = self.browse(cr, SUPERUSER_ID, mail_server_id)
         elif not smtp_server:
-            mail_server_ids = self.search(cr, SUPERUSER_ID, [], order='sequence', limit=1)
+            mail_server_ids = self.search(cr, SUPERUSER_ID, [('smtp_user','=', mail_from)], order='sequence', limit=1)
             if mail_server_ids:
                 mail_server = self.browse(cr, SUPERUSER_ID, mail_server_ids[0])
 
